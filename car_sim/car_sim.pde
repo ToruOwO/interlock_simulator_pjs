@@ -2,12 +2,23 @@ Car test;
 Car stationary;
 World w;
 
+// button params
+
 int buttonX, buttonY; // position of play button
 int buttonSize = 50;
 color buttonColor, pausedButtonColor;
 color currentColor;
 boolean buttonOver = false;
 boolean paused = true;
+
+// ego car params
+
+float egoX, egoY, egoZ;
+float egoSpeed;
+float egoAcceleration;
+float egoOrientation;
+
+// world params
 
 float seconds_per_frame = 1/60.0;
 float pixels_per_meter = 4.705;
@@ -19,6 +30,10 @@ void setup() {
   currentColor = pausedButtonColor;
   buttonX = width-100;
   buttonY = height-100;
+  paramsX = 200;
+  paramsY = height-120;
+  paramsW = 340;
+  paramsH = 180;
 
   start();
 
@@ -62,7 +77,24 @@ void draw() {
   ellipse(buttonX, buttonY, buttonSize, buttonSize);
 
   fill(color(200));
-  
+
+
+  // draw parameter window
+  rect(paramsX, paramsY, paramsW, paramsH);
+  fill(0);
+
+  textSize(32);
+  text("Current parameters", paramsX-paramsW/2+10, height - 170);
+
+  float[] paramValues = { egoX, egoY, egoZ, egoSpeed, egoAcceleration, egoOrientation };
+  String[] paramNames = { "x-pos", "y-pos", "z-pos", "speed", "acceleration", "orientation" };
+
+  for (int i = 0; i < 6; i = i+1) {
+    textSize(16);
+    text("Current " + paramNames[i] + " = " + paramValues[i], 
+      paramsX-paramsW/2+10, 
+      paramsY+20*(i-1));
+  }
 
   // check if the simulation is paused
   if (!paused) {
@@ -84,6 +116,15 @@ void draw() {
 }
 
 void update(int x, int y) {
+  // update car parameters
+  egoX = test.position.x;
+  egoY = test.position.y;
+  egoZ = test.position.z;
+  egoSpeed = test.speed;
+  egoAcceleration = test.acceleration;
+  egoOrientation = test.orientation;
+
+  // update button state
   if (overButton(buttonX, buttonY, buttonSize)) {
     buttonOver = true;
   } else {
